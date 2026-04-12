@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+**/.env
+
+# Virtual environments
+venv/
+**/venv/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backup files
+*~
+*.bak
+*.swp
+
+# Python package distribution
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Test outputs
+coverage/
+htmlcov/
+
+# PyInstaller
+*.spec
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Misc
+*.sqlite3
+*.db
