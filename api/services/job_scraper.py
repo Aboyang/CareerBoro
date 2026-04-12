@@ -2,6 +2,39 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import concurrent.futures
+import os
+from dotenv import load_dotenv
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+
+client = OpenAI() 
+
+def summarize_jd(description: str) -> str:
+    if not description:
+        return None
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Summarize the job description into concise bullet points."
+                },
+                {
+                    "role": "user",
+                    "content": f"Summarize this job description:\n\n{description}"
+                }
+            ]
+        )
+
+        return response.choices[0].message.content.strip()  # dot notation, not dict
+
+    except Exception as e:
+        print(f"Summarization failed: {e}")
+        return None
 
 class JobScraper:
     ROLE_TYPES = {
@@ -77,23 +110,25 @@ class JobScraper:
             el = soup.find(tag, class_=cls)
             return el.text.strip() if el else None
 
-        apply_btn = soup.find("a", {"data-control-name": "jobdetails_topcard_inapply"})
-        apply_link = apply_btn["href"] if apply_btn and apply_btn.has_attr("href") else None
+        raw_desc = desc_el.text.strip() if (desc_el := soup.find("div", class_="description__text")) else None
+
+        # Summarised JD
+        description = summarize_jd(raw_desc)
 
         return {
             "job_id": job_id,
             "job_title": safe_find("h2", "top-card-layout__title"),
             "company": safe_find("a", "topcard__org-name-link"),
-            "location": safe_find("span", "topcard__flavor--bullet"),
-            "description": safe_find("div", "description__text"),
-            "apply_link": apply_link,
-            "job_url": f"https://www.linkedin.com/jobs/view/{job_id}/"
+            "description": description,
+            "apply_link": f"https://www.linkedin.com/jobs/view/{job_id}/"
         }
 
     # ---------- MAIN PIPELINE ----------
     def scrape_jobs(self, start=0):
         jobs = self.fetch_job_list(start)
         job_ids = []
+
+        print("Limit", self.limit)
 
         for job in jobs:
             if len(job_ids) >= self.limit:
@@ -114,24 +149,3 @@ class JobScraper:
             results = list(executor.map(self.fetch_job_details, job_ids))
 
         return [job for job in results if job]
-
-
-# --- TEST SCRIPT ---
-# if __name__ == "__main__":
-#     scraper_with_company = JobScraper(
-#         keywords="AI Engineer",
-#         location="Singapore",
-#         role_type="internship",
-#         limit=5
-#     )
-
-#     print("\nFetching jobs with company filter...")
-#     jobs = scraper_with_company.scrape_jobs()
-#     for idx, job in enumerate(jobs, start=1):
-#         print(f"\nJob {idx}:")
-#         print(f"Title: {job['job_title']}")
-#         print(f"Company: {job['company']}")
-#         print(f"Description: {job['description'][:100]}...")
-#         print(f"Location: {job['location']}")
-#         print(f"Apply link: {job['apply_link']}")
-#         print(f"Job URL: {job['job_url']}")

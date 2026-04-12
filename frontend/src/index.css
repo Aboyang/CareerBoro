@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Typography */
+  font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #e8eaf0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Color tokens */
+  --bg:              #0f1117;
+  --surface:         #191c27;
+  --surface-raised:  #1f2333;
+
+  --border:          rgba(255, 255, 255, 0.07);
+  --border-hover:    rgba(99, 179, 237, 0.35);
+
+  --accent:          #63b3ed;
+  --accent-soft:     rgba(99, 179, 237, 0.12);
+  --accent-green:    #68d391;
+
+  --text-primary:    #e8eaf0;
+  --text-secondary:  #8892a4;
+  --text-muted:      #555d6e;
+
+  --font-display:    'DM Sans', 'Segoe UI', sans-serif;
+  --font-body:       'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono:       'IBM Plex Mono', 'Fira Code', monospace;
+
+  --radius-card:     12px;
+  --radius-btn:      8px;
+
+  --shadow-card:     0 2px 16px rgba(0, 0, 0, 0.35);
+  --shadow-hover:    0 8px 32px rgba(0, 0, 0, 0.5);
+
+  --transition:      0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--accent-green);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: var(--bg);
+  color: var(--text-primary);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 3.2em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+button {
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: var(--font-body);
+  background-color: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color var(--transition), background-color var(--transition);
+}
+button:hover {
+  border-color: var(--border-hover);
+  background-color: var(--surface-raised);
+}
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -6,7 +6,7 @@
 import requests
 from langchain.tools import tool
 
-BASE_URL = "http://localhost:8000"  # Our API
+BASE_URL = "http://localhost:8001"
 
 # ------------------------
 # Research Tools
@@ -39,26 +39,39 @@ def summarise(content: str) -> str:
     response.raise_for_status()
     return response.text
 
-@tool
-def full_research(query: str) -> str:
-    """Perform full research workflow."""
-    url = f"{BASE_URL}/research/"
-    payload = {"query": query}
-    response = requests.post(url, json=payload)
-    response.raise_for_status()
-    return response.text
-
 # ------------------------
 # Jobs Tools
 # ------------------------
 
 @tool
-def fetch_jobs(keywords: str, location: str, role: str = "full_time") -> str:
+def fetch_jobs(keywords: str, location: str, role: str, limit: int = 5) -> str:
     """Get jobs from the job endpoint."""
     url = f"{BASE_URL}/jobs/"
-    params = {"keywords": keywords, "location": location, "role": role}
+    params = {"keywords": keywords, "location": location, "role": role, "limit": limit}
     response = requests.get(url, params=params)
     response.raise_for_status()
+    return response.text
+
+@tool
+def save_job(role: str, company: str, job_desc: str, apply_link: str, research: str, webpages_read: list) -> str:
+    """
+    Save a job to the database.
+    """
+
+    url = f"{BASE_URL}/jobs/save"
+
+    payload = {
+        "role": role,
+        "company": company,
+        "job_desc": job_desc,
+        "apply_link": apply_link,
+        "research": research,
+        "webpages_read": webpages_read
+    }
+
+    response = requests.post(url, json=payload)
+    response.raise_for_status()
+
     return response.text
 
 # ------------------------

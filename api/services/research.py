@@ -38,17 +38,16 @@ class Research:
             print(f"Search error: {e}")
             return []
 
-    def read_html(self, url, char_limit=2000):
-        """
-        Fetch webpage content using trafilatura (clean extraction)
-        """
+    def read_html(self, url, char_limit=5000):
         try:
             downloaded = trafilatura.fetch_url(url)
             text = trafilatura.extract(downloaded)
 
-            if text:
-                return text[:char_limit]
-            return ""
+            if not text:
+                return ""
+
+            content = self.summarise_page(text[:char_limit])
+            return {"url": url, "content": content}
 
         except Exception as e:
             print(f"Error fetching {url}: {e}")
@@ -63,7 +62,7 @@ class Research:
 
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4.1-mini",
+                model="gpt-4o-mini",
                 messages=[
                     {
                         "role": "user",

@@ -1,0 +1,23 @@
+.dashboard {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text-primary);
+}
+
+.dashboard-left {
+  width: 60%;
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow: hidden;
+}
+
+.dashboard-right {
+  width: 40%;
+  padding: 20px;
+  border-left: 1px solid var(--border);
+  background-color: var(--surface);
+  overflow: hidden;
+}
