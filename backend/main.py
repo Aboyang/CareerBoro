@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from routes import chat, jobs, resume
+from routes import chat, jobs, resume, interview
 from services.job_db import JobDB
 from services.job_broadcaster import broadcaster
 import asyncio
@@ -35,6 +35,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(chat.router)
 app.include_router(jobs.router)
 app.include_router(resume.router)
+app.include_router(interview.router)
 
 app.add_middleware(
     CORSMiddleware,

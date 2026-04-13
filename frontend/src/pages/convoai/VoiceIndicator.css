@@ -1,0 +1,37 @@
+.circle {
+  border-radius: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.large {
+  width: 260px;
+  height: 260px;
+  background: rgba(99, 179, 237, 0.08);
+  border: 1px solid rgba(99, 179, 237, 0.15);
+  animation: breathe 2s ease-in-out 0s infinite alternate both;
+  box-shadow: 0 0 40px rgba(99, 179, 237, 0.08);
+}
+
+.medium {
+  width: 175px;
+  height: 175px;
+  background: rgba(99, 179, 237, 0.12);
+  border: 1px solid rgba(99, 179, 237, 0.2);
+  animation: breathe 2s ease-in-out 0.4s infinite alternate both;
+}
+
+.small {
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(135deg, #4299e1, var(--accent, #63b3ed));
+  border: none;
+  animation: breathe 2s ease-in-out 0.8s infinite alternate both;
+  box-shadow: 0 0 24px rgba(99, 179, 237, 0.4);
+}
+
+@keyframes breathe {
+  from { transform: scale(1); }
+  to   { transform: scale(0.78); }
+}

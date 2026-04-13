@@ -1,0 +1,98 @@
+.voice-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  width: 100%;
+  gap: 28px;
+  padding: 40px 24px;
+  background: var(--bg);
+  box-sizing: border-box;
+}
+
+/* ── Job context pill ────────────────────────────────────────────────────────── */
+.voice-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 6px 16px;
+}
+
+.voice-context__label {
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.voice-context__role {
+  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.voice-context__sep {
+  color: var(--text-muted);
+}
+
+.voice-context__company {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+/* ── Questions preview ───────────────────────────────────────────────────────── */
+.voice-questions {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.voice-questions__group {}
+
+.voice-questions__category {
+  font-size: 0.63rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+
+.voice-questions__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+}
+
+.voice-questions__item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.voice-questions__num {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  flex-shrink: 0;
+}

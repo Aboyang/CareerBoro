@@ -33,6 +33,8 @@ export default function JobBoard() {
     return () => { clearTimeout(reconnectTimer.current); wsRef.current?.close(); };
   }, []);
 
+  console.log("selectedJob:", selectedJob)
+
   return (
     <div className="jobboard">
       <div className="jobboard__header">

@@ -3,12 +3,12 @@ import ChatMessage from "./ChatMessage"
 import ChatInput from "./ChatInput"
 import './Chat.css'
 
+// Only the fetch question gets settings injected
 const recommendedQuestions = [
-  "Fetch for me 2 roles based on my profile.",
-  "For each of my job listings, research the company's current initiatives relevant to the role's department.",
-  "Research about the common interview questions for AI engineer.",
-  "What is the different between ML and AI engineer?",
-  "Based on my resume, what could be improved for the selected role. (Select a role)"
+  { label: "Fetch for me 2 roles based on my profile.", injectSettings: true },
+  { label: "Research about the common interview questions for AI engineer.", injectSettings: false },
+  { label: "What is the difference between ML and AI engineer, and what to learn?", injectSettings: false },
+  { label: "Based on my resume, what could be improved for the selected role. (Select a role)", injectSettings: false },
 ]
 
 // ── Read job search settings from localStorage ────────────────────────────────
@@ -26,7 +26,6 @@ function loadSettings() {
     expLevels: read("settings:expLevels", []),
     roles:     read("settings:roles", []),
     locations: read("settings:locations", []),
-    fetchTime: read("settings:fetchTime", null),
   }
 }
 
@@ -35,16 +34,15 @@ function buildSettingsContext(settings) {
   const { expLevels, roles, locations } = settings
   const lines = []
 
-  if (expLevels.length)  lines.push(`Experience level(s): ${expLevels.join(", ")}`)
-  if (roles.length)      lines.push(`Target role(s): ${roles.join(", ")}`)
-  if (locations.length)  lines.push(`Preferred location(s): ${locations.join(", ")}`)
+  if (expLevels.length) lines.push(`Experience level(s): ${expLevels.join(", ")}`)
+  if (roles.length)     lines.push(`Target role(s): ${roles.join(", ")}`)
+  if (locations.length) lines.push(`Preferred location(s): ${locations.join(", ")}`)
 
   if (!lines.length) return null
 
   return `[User job search preferences]\n${lines.join("\n")}\n\nFor each role or company mentioned, also research the company's current initiatives relevant to the role's department.`
 }
 
-// ── Inject settings context only for recommended questions ────────────────────
 function buildPromptWithContext(question) {
   const settings = loadSettings()
   const context = buildSettingsContext(settings)
@@ -80,7 +78,8 @@ export default function Chat() {
   const assistantIndexRef = useRef(null)
 
   async function handleSend(text) {
-    if (!text.trim()) return
+    text = text.trim()
+    if (!text) return
 
     const userMsg = { role: "user", content: text }
     const assistantMsg = { role: "assistant", content: "" }
@@ -107,34 +106,23 @@ export default function Chat() {
     )
   }
 
-  // Recommended questions: display text shown to user, enriched prompt sent to backend
+
+  // Clicking populates the input with the FULL prompt (injected if applicable)
+  // so the user can read, tweak, and send
   const handleRecommendedClick = (question) => {
-    const enrichedPrompt = buildPromptWithContext(question)
-
-    // Show the original question text in the chat UI (not the raw preamble)
-    const userMsg = { role: "user", content: question }
-    const assistantMsg = { role: "assistant", content: "" }
-
-    setMessages(prev => {
-      const newMsgs = [...prev, userMsg, assistantMsg]
-      assistantIndexRef.current = newMsgs.length - 1
-      return newMsgs
-    })
-
-    setStreaming(true)
-
-    streamChat(
-      enrichedPrompt,   // ← enriched version goes to the backend
-      chunk => {
-        setMessages(prev => {
-          const copy = [...prev]
-          copy[assistantIndexRef.current] = { role: "assistant", content: chunk }
-          return copy
-        })
-      },
-      () => setStreaming(false)
-    )
+    const prompt = question.injectSettings
+      ? buildPromptWithContext(question.label)
+      : question.label
+    setInputValue(prompt)
   }
+
+  // On send, just fire whatever is in the input — no further transformation
+  const handleInputSend = () => {
+    const trimmed = inputValue.trim()
+    if (!trimmed) return
+    handleSend(trimmed)
+  }
+
 
   return (
     <div className="chat-wrapper">
@@ -147,7 +135,7 @@ export default function Chat() {
                 className="recommended-btn"
                 onClick={() => handleRecommendedClick(q)}
               >
-                {q}
+                {q.label}
               </button>
             ))}
           </div>
@@ -166,7 +154,7 @@ export default function Chat() {
       <ChatInput
         value={inputValue}
         onChange={setInputValue}
-        onSend={() => handleSend(inputValue)}
+        onSend={handleInputSend}
         disabled={streaming}
       />
     </div>
