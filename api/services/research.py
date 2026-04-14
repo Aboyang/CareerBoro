@@ -18,7 +18,7 @@ class Research:
         # Initialize OpenAI client
         self.client = OpenAI(api_key=OPENAI_API_KEY)
 
-    def find_webpages(self, query, limit=5):
+    def find_webpages(self, query, limit=3):
         """
         Return top 'limit' webpage URLs for a given query
         """
@@ -38,7 +38,7 @@ class Research:
             print(f"Search error: {e}")
             return []
 
-    def read_html(self, url, char_limit=5000):
+    def read_html(self, url, char_limit=500):
         try:
             downloaded = trafilatura.fetch_url(url)
             text = trafilatura.extract(downloaded)
@@ -63,6 +63,7 @@ class Research:
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
+                max_tokens=300,
                 messages=[
                     {
                         "role": "user",
@@ -74,7 +75,6 @@ class Research:
             return response.choices[0].message.content
 
         except Exception as e:
-            print(f"OpenAI error: {e}")
             return "Error generating summary."
 
 

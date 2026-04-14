@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./JobBoard.css"
+import "./JobBoard.css";
 
 const TRUNCATE_DESC = 120;
 const TRUNCATE_RESEARCH = 100;
@@ -10,17 +10,17 @@ function truncate(text, len) {
   return text.length > len ? text.slice(0, len) + "…" : text;
 }
 
-export default function JobCard({ job, onClick }) {
+export default function JobCard({ job, onClick, isSelected, onDeselect }) {
   const [hovered, setHovered] = useState(false);
 
   const handleClick = (e) => {
-    e.stopPropagation()
-    onClick(job)
-  }
+    e.stopPropagation();
+    onClick(job);
+  };
 
   return (
     <div
-      className={`job-card ${hovered ? "job-card--hovered" : ""}`}
+      className={`job-card ${hovered ? "job-card--hovered" : ""} ${isSelected ? "job-card--selected" : ""}`}
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -29,6 +29,16 @@ export default function JobCard({ job, onClick }) {
       onKeyDown={(e) => e.key === "Enter" && handleClick(e)}
       aria-label={`View details for ${job.role} at ${job.company}`}
     >
+      {isSelected && (
+        <button
+          className="job-card__deselect"
+          onClick={onDeselect}
+          aria-label="Deselect job"
+        >
+          ✕
+        </button>
+      )}
+
       <div className="job-card__header">
         <div className="job-card__badge">{job.company?.[0] ?? "?"}</div>
         <div className="job-card__titles">
@@ -54,7 +64,7 @@ export default function JobCard({ job, onClick }) {
         <p className="job-card__text job-card__text--ref">
           {truncate(
             Array.isArray(job.webpages_read)
-              ? job.webpages_read.map(w => w.url ?? w).join("  ·  ")
+              ? job.webpages_read.map((w) => w.url ?? w).join("  ·  ")
               : job.webpages_read,
             TRUNCATE_REFS
           )}

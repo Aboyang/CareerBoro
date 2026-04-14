@@ -2,12 +2,12 @@ from pydantic import BaseModel
 
 class SearchRequest(BaseModel):
     query: str
-    limit: int = 5
+    limit: int = 2
 
 
 class ReadRequest(BaseModel):
     url: str
-    char_limit: int = 2000
+    char_limit: int = 500
 
 
 class SummariseRequest(BaseModel):
@@ -17,4 +17,4 @@ class SummariseRequest(BaseModel):
 class FullResearchRequest(BaseModel):
     query: str
     limit: int = 3
-    char_limit: int = 3000
+    char_limit: int = 500

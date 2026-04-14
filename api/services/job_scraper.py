@@ -10,32 +10,6 @@ from openai import OpenAI
 
 client = OpenAI() 
 
-def summarize_jd(description: str) -> str:
-    if not description:
-        return None
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Summarize the job description into concise bullet points."
-                },
-                {
-                    "role": "user",
-                    "content": f"Summarize this job description:\n\n{description}"
-                }
-            ]
-        )
-
-        return response.choices[0].message.content.strip()  # dot notation, not dict
-
-    except Exception as e:
-        print(f"Summarization failed: {e}")
-        return None
-
 class JobScraper:
     ROLE_TYPES = {
         "full_time": "F",
@@ -113,7 +87,7 @@ class JobScraper:
         raw_desc = desc_el.text.strip() if (desc_el := soup.find("div", class_="description__text")) else None
 
         # Summarised JD
-        description = summarize_jd(raw_desc)
+        description = self.summarize_jd(raw_desc)
 
         return {
             "job_id": job_id,
@@ -122,13 +96,55 @@ class JobScraper:
             "description": description,
             "apply_link": f"https://www.linkedin.com/jobs/view/{job_id}/"
         }
+    
+    def summarize_jd(self, description: str) -> str:
+        if not description:
+            return None
+
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                temperature=0,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """
+                                   Summarize the job description into concise bullet points. 
+                                   Keep ONLY responsibility, qualitifications (sometimes known as requirements).
+
+                                   Return in this format:
+
+                                   Responsibilities:
+                                   - <point1>
+                                   - <point2>
+
+                                   Minimum Requirements/Qualitifications
+                                   - <point1>
+                                   - <point2>
+
+                                   Preferred Requirements/Qualitifications
+                                   - <point1>
+                                   - <point2>
+                                   ...
+                                   """
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Summarize this job description:\n\n{description}"
+                    }
+                ]
+            )
+
+            return response.choices[0].message.content.strip()  # dot notation, not dict
+
+        except Exception as e:
+            print(f"Summarization failed: {e}")
+            return None
 
     # ---------- MAIN PIPELINE ----------
     def scrape_jobs(self, start=0):
         jobs = self.fetch_job_list(start)
         job_ids = []
-
-        print("Limit", self.limit)
 
         for job in jobs:
             if len(job_ids) >= self.limit:

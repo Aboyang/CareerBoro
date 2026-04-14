@@ -165,6 +165,37 @@ function InterviewPrepModal({ job, onClose }) {
   )
 }
 
+function parseJobDescription(text) {
+  if (!text) return []
+
+  const lines = text.split("\n")
+  const sections = []
+  let currentSection = null
+
+  for (let rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line) continue
+
+    // Bullet point
+    if (line.startsWith("-")) {
+      const item = line.replace(/^-+\s*/, "").trim()
+      if (currentSection) {
+        currentSection.items.push(item)
+      }
+      continue
+    }
+
+    // Otherwise → it's a header
+    currentSection = {
+      title: line.replace(":", "").trim(),
+      items: [],
+    }
+    sections.push(currentSection)
+  }
+
+  return sections
+}
+
 // ── Main JobDetail ────────────────────────────────────────────────────────────
 export default function JobDetail({ job, onClose }) {
   const [showPrepModal, setShowPrepModal] = useState(false)
@@ -226,7 +257,58 @@ export default function JobDetail({ job, onClose }) {
           <div className="detail-body">
             <section className="detail-section">
               <h4 className="detail-label">Job Description</h4>
-              <p className="detail-text">{job.job_desc || "No description provided."}</p>
+              {parseJobDescription(job.job_desc).map((section, i) => (
+                <div key={i} style={{ marginBottom: "16px" }}>
+                  
+                  {/* Section Header */}
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      fontFamily: "var(--font-mono)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      color: "var(--accent)",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    {section.title}
+                  </p>
+
+                  {/* Bullet Points */}
+                  <ul
+                    style={{
+                      listStyle: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "6px",
+                    }}
+                  >
+                    {section.items.map((item, j) => (
+                      <li
+                        key={j}
+                        style={{
+                          fontSize: "0.82rem",
+                          color: "var(--text-secondary)",
+                          lineHeight: "1.5",
+                          paddingLeft: "10px",
+                          position: "relative",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            color: "var(--accent)",
+                          }}
+                        >
+                          •
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </section>
 
             <section className="detail-section">

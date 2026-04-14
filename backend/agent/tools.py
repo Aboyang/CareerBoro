@@ -1,10 +1,12 @@
-# ISSUE
-# Consider whether we want full research flow or bit by bit research
-# Consider whether we want LangGraph structure
-
-# tools.py
 import requests
 from langchain.tools import tool
+import os
+from dotenv import load_dotenv
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+
+client = OpenAI() 
 
 BASE_URL = "http://localhost:8001"
 
@@ -35,6 +37,99 @@ def summarise(content: str) -> str:
     """Summarise given content."""
     url = f"{BASE_URL}/research/summarise"
     payload = {"content": content}
+    response = requests.post(url, json=payload)
+    response.raise_for_status()
+    return response.text
+
+# ------------------------
+# Jobs Tools
+# ------------------------
+@tool
+def send_email(to: str, subject: str, context: str):
+    """Send an email using Resend."""
+    url = f"{BASE_URL}/email/"
+
+    response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                temperature=0,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """
+                                    You are an expert cold email writing assistant for students and early-career engineers.
+
+                                    Your job is to write concise, high-impact outreach emails to professionals at top tech companies.
+
+                                    You MUST follow these rules:
+
+                                    ## 1. PRIMARY GOAL
+                                    Write an email that maximizes the chance of getting a reply, not a full self-introduction.
+
+                                    ## 2. LENGTH LIMIT
+                                    Keep the email:
+                                    - 120–180 words max
+                                    - 1 screen on mobile
+                                    - no long bullet lists
+                                    - no full resume dumps
+
+                                    ## 3. CONTENT SELECTION RULES
+                                    Only include:
+                                    - 1–2 strongest achievements OR projects
+                                    - ONLY the most relevant experience to the target company/role
+                                    - DO NOT include full tech stack lists
+                                    - DO NOT include every project
+
+                                    ## 4. STRUCTURE
+                                    Always follow this structure:
+
+                                    1. Greeting + context (1–2 lines)
+                                    2. 1 short credibility snapshot (school OR role)
+                                    3. 1–2 strongest relevant experiences (very short bullets or compact sentence)
+                                    4. Clear ask (advice / referral / chat)
+                                    5. Polite close
+
+                                    ## 5. PERSONALIZATION RULE
+                                    If company or person is mentioned:
+                                    - tailor message to their role or domain
+                                    - mention ONLY relevant alignment (AI, infra, product, etc.)
+                                    - NEVER say generic “I am interested in Meta” without specificity
+
+                                    ## 6. TONE
+                                    - Professional but natural
+                                    - Not overly formal
+                                    - Not salesy
+                                    - Not exaggerated
+                                    - No fluff phrases like "I would be honored"
+
+                                    ## 7. PRIORITIZATION RULE (VERY IMPORTANT)
+                                    If too much information is provided:
+                                    - You MUST compress it
+                                    - You MUST choose the top 1–2 most impressive signals only
+                                    - You MUST discard the rest
+
+                                    ## 8. OUTPUT FORMAT (EMAIL-READY HTML)
+                                    - Output the email in clean HTML format
+                                    - Wrap each paragraph in <p> tags
+                                    - Use <br/> only for line breaks within a paragraph (e.g. signature)
+                                    - Return ONLY raw HTML code. Do NOT include markdown, backticks, explanations, or any text outside the HTML tags.
+
+                                    ---
+
+                                    You are writing for busy engineers who receive many messages per day. Every sentence must earn its place.
+
+                                   """
+                    },
+                    {
+                        "role": "user",
+                        "content": context
+                    }
+                ]
+            )
+
+    content = response.choices[0].message.content.strip()  # dot notation, not dict
+
+
+    payload = {"to": to, "subject": subject, "content": content}
     response = requests.post(url, json=payload)
     response.raise_for_status()
     return response.text

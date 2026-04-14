@@ -1,6 +1,4 @@
 """
-job_desc_resume_match.py
-
 Full hybrid JD ↔ Resume matching using:
   1. LLM extraction  — structured parsing of JD requirements & resume profile
   2. Keyword match   — hard skill set intersection
