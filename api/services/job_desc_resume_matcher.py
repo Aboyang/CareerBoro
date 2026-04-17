@@ -304,19 +304,10 @@ class JobDescResumeMatch:
           5. LLM judge score
           6. Weighted blend → overall score
         """
-        print("[1/5] Extracting JD requirements...")
         self.extract_jd_requirements()
-
-        print("[2/5] Extracting resume profile...")
         self.extract_resume_profile()
-
-        print("[3/5] Computing keyword match...")
         kw = self.keyword_match_score()
-
-        print("[4/5] Computing embedding similarity...")
         emb_score = self.embedding_similarity_score()
-
-        print("[5/5] Running LLM judge...")
         judge = self.llm_judge_score()
 
         # --- Weighted blend ---
