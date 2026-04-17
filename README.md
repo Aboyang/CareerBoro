@@ -72,9 +72,31 @@ source venv/bin/activate  # Mac/Linux OR source venv\Scripts\activate # Window
 pip install -r requirements.txt
 ```
 
+### 2. Set Up Environment Keys
+
+```bash
+# AI Models
+OPENAI_API_KEY=
+REALTIME_API_KEY=
+
+# Tools
+SERPAPI_API_KEY=
+RESEND_API_KEY=
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+
+# LangSmith (optional but recommended for tracing agent reasoning/workflow)
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=
+LANGSMITH_API_KEY=
+LANGSMITH_PROJECT=
+```
 ---
 
-## 🔌 Running the Services
+## Running the Services
 
 ### Start API Services
 
