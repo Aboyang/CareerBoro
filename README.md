@@ -1,6 +1,10 @@
-# 🚀 CareerBoro
+# CareerBoro
 
-## 📌 Introduction
+<img width="294" height="191" alt="Screenshot 2026-04-17 at 1 14 08 AM" src="https://github.com/user-attachments/assets/6dd08164-9d57-4245-a360-17c5158e4650" />
+<img width="294" height="191" alt="Screenshot 2026-04-17 at 1 16 43 AM" src="https://github.com/user-attachments/assets/4e4459c4-6fd0-4eb5-b361-89a8bbcb736a" />
+<img width="294" height="191" alt="Screenshot 2026-04-17 at 1 16 28 AM" src="https://github.com/user-attachments/assets/69971f4b-990d-446b-bb3a-bd8f7c40da24" />
+
+## Introduction
 
 **CareerBoro** is a **Platform-as-an-Agent (PAaaS)** system designed to streamline the job search and application workflow.
 
